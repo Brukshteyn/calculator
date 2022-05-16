@@ -14,19 +14,11 @@ class Calculator:
 
     def get_today_stats(self):
 
-        result = 0
-        for rec in self.records:
-            if rec.date == dt.datetime.now().date():
-                result += rec.amount
-        return result
+        return sum([rec.amount for rec in self.records if rec.date == dt.datetime.now().date()])
 
     def get_week_stats(self):
 
-        result = 0
-        for rec in self.records:
-            if rec.date > dt.datetime.now().date() - dt.timedelta.days(7):
-                result += rec.amount
-        return result
+        return sum([rec.amount for rec in self.records if rec.date > dt.datetime.now().date() - dt.timedelta.days(7)])
 
 
 class CaloriesCalculator(Calculator):
