@@ -33,8 +33,7 @@ class CaloriesCalculator(Calculator):
         """Проверяем превышение лимита по каллориям."""
         if self.get_today_stats() >= self.limit:
             return 'Хватит есть!'
-        else:
-            return self.LIMIT_UP.format(balance = self.get_balance())
+        return self.LIMIT_UP.format(balance = self.get_balance())
 
 
 class CashCalculator(Calculator):
@@ -49,8 +48,7 @@ class CashCalculator(Calculator):
         currency_balance = round(self.get_balance() / self.DIC_CURRENCY[currency][0], 2)
         if self.get_today_stats() >= self.limit:
             return 'Денег нет, держись'
-        else:
-            return self.LIMIT_UP.format(balance = currency_balance, currency = self.DIC_CURRENCY[currency][1])
+        return self.LIMIT_UP.format(balance = currency_balance, currency = self.DIC_CURRENCY[currency][1])
 
 
 class Record:
