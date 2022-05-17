@@ -14,7 +14,8 @@ class Calculator:
 
     def get_today_stats(self):
         """Суммируем сумму за сегодня."""
-        return sum([rec.amount for rec in self.records if rec.date == dt.datetime.now().date()])
+        fix_date = dt.datetime.now().date()
+        return sum([rec.amount for rec in self.records if rec.date == fix_date])
 
     def get_balance(self) -> int:
         """Получение остатка от лимита."""
