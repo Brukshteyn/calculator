@@ -23,33 +23,34 @@ class Calculator:
 
 class CaloriesCalculator(Calculator):
 
+    LIMIT_UP = 'Сегодня можно съесть что-нибудь ещё, но с общей калорийностью не более {balance} кКал'
 
     def get_calories_remained(self):
         """Проверяем превышение лимита по каллориям."""
         current = self.get_today_stats()
+        balance = self.limit - current
         if current >= self.limit:
             return 'Хватит есть!'
         else:
-            return f'Сегодня можно съесть что-нибудь ещё, но с общей калорийностью не более {self.limit - current} кКал'
+            return self.LIMIT_UP.format(balance = balance)
 
 
 class CashCalculator(Calculator):
 
-
-    USD_RATE = 63.3
-    EURO_RATE = 65.7
+    DIC_CURRENCY = {'rub': [1, 'руб'],
+                    'usd': [63.3, 'USD'],
+                    'eur': [65.7, 'Euro']}
+    LIMIT_UP = 'На сегодня осталось {balance} {currency}'
 
     def get_today_cash_remained(self, currency):
         """Проверям превышение лимита затрат и выдаем результат в необходимой валюте."""
         current = self.get_today_stats()
-        dic_currency = {'rub': [1, 'руб'],
-                        'usd': [self.USD_RATE, 'USD'],
-                        'eur': [self.EURO_RATE, 'Euro']}
+        balance = round((self.limit - current) / self.DIC_CURRENCY[currency][0], 2)
+
         if current >= self.limit:
-            return f'Денег нет, держись'
+            return 'Денег нет, держись'
         else:
-            return f'''На сегодня осталось {round((self.limit - current) / 
-                                                  dic_currency[currency][0], 2)} {dic_currency[currency][1]}'''
+            return self.LIMIT_UP.format(balance = balance, currency = self.DIC_CURRENCY[currency][1])
 
 
 class Record:
