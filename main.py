@@ -39,9 +39,9 @@ class CaloriesCalculator(Calculator):
 
 class CashCalculator(Calculator):
 
-    DIC_CURRENCY = {'rub': [1, 'руб'],
-                    'usd': [63.3, 'USD'],
-                    'eur': [65.7, 'Euro']}
+    DIC_CURRENCY = {'rub': (1, 'руб'),
+                    'usd': (63.3, 'USD'),
+                    'eur': (65.7, 'Euro')}
     LIMIT_UP = 'На сегодня осталось {balance} {currency}'
 
     def get_today_cash_remained(self, currency):
