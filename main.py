@@ -16,6 +16,10 @@ class Calculator:
         """Суммируем сумму за сегодня."""
         return sum([rec.amount for rec in self.records if rec.date == dt.datetime.now().date()])
 
+    def get_balance(self) -> int:
+        """Получение остатка от лимита."""
+        return self.limit - self.get_today_stats()
+
     def get_week_stats(self):
         """Суммируем сумму за последние 7 дней."""
         return sum([rec.amount for rec in self.records if rec.date > dt.datetime.now().date() - dt.timedelta.days(7)])
@@ -27,12 +31,10 @@ class CaloriesCalculator(Calculator):
 
     def get_calories_remained(self):
         """Проверяем превышение лимита по каллориям."""
-        current = self.get_today_stats()
-        balance = self.limit - current
-        if current >= self.limit:
+        if self.get_today_stats() >= self.limit:
             return 'Хватит есть!'
         else:
-            return self.LIMIT_UP.format(balance = balance)
+            return self.LIMIT_UP.format(balance = self.get_balance())
 
 
 class CashCalculator(Calculator):
@@ -44,13 +46,11 @@ class CashCalculator(Calculator):
 
     def get_today_cash_remained(self, currency):
         """Проверям превышение лимита затрат и выдаем результат в необходимой валюте."""
-        current = self.get_today_stats()
-        balance = round((self.limit - current) / self.DIC_CURRENCY[currency][0], 2)
-
-        if current >= self.limit:
+        currency_balance = round(self.get_balance() / self.DIC_CURRENCY[currency][0], 2)
+        if self.get_today_stats() >= self.limit:
             return 'Денег нет, держись'
         else:
-            return self.LIMIT_UP.format(balance = balance, currency = self.DIC_CURRENCY[currency][1])
+            return self.LIMIT_UP.format(balance = currency_balance, currency = self.DIC_CURRENCY[currency][1])
 
 
 class Record:
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     r1 = Record(amount=3000, comment='Кофе')
     cash_calculator = CashCalculator(1000)
     cash_calculator.add_record(Record(amount=145, comment='кофе'))
-    cash_calculator.add_record(Record(amount=300, comment='Серёге за обед'))
+    cash_calculator.add_record(Record(amount=400, comment='Серёге за обед'))
     cash_calculator.add_record(Record(amount=3000,
                                       comment='бар в Танин др',
                                       date='08.11.2019'))
