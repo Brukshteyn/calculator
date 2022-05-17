@@ -4,16 +4,20 @@ import datetime as dt
 class Calculator:
 
     def __init__(self, limit):
+        """Сохраняем лимит и записи."""
         self.limit = limit
         self.records = []
 
     def add_record(self, record):
+        """Добавление новой записи."""
         self.records.append(record)
 
     def get_today_stats(self):
+        """Суммируем сумму за сегодня."""
         return sum([rec.amount for rec in self.records if rec.date == dt.datetime.now().date()])
 
     def get_week_stats(self):
+        """Суммируем сумму за последние 7 дней."""
         return sum([rec.amount for rec in self.records if rec.date > dt.datetime.now().date() - dt.timedelta.days(7)])
 
 
@@ -21,6 +25,7 @@ class CaloriesCalculator(Calculator):
 
 
     def get_calories_remained(self):
+        """Проверяем превышение лимита по каллориям."""
         current = self.get_today_stats()
         if current >= self.limit:
             return 'Хватит есть!'
@@ -35,6 +40,7 @@ class CashCalculator(Calculator):
     EURO_RATE = 65.7
 
     def get_today_cash_remained(self, currency):
+        """Проверям превышение лимита затрат и выдаем результат в необходимой валюте."""
         current = self.get_today_stats()
         dic_currency = {'rub': [1, 'руб'],
                         'usd': [self.USD_RATE, 'USD'],
@@ -50,11 +56,13 @@ class Record:
 
 
     def __init__(self, amount, comment, date=None):
+        """Сохраняем артибуты записи."""
         self.amount = amount
         self.date = self._get_date(date)
         self.comment = comment
 
     def _get_date(self, date):
+        """Проверка наличия и приведение даты."""
         if date == None:
             return dt.datetime.now().date()
         date_format = '%d.%m.%Y'
