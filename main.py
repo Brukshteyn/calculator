@@ -55,6 +55,7 @@ class CashCalculator(Calculator):
 
 class Record:
 
+    RUS_DATE_FORMAT = '%d.%m.%Y'
 
     def __init__(self, amount, comment, date=None):
         """Сохраняем артибуты записи."""
@@ -66,8 +67,7 @@ class Record:
         """Проверка наличия и приведение даты."""
         if date == None:
             return dt.datetime.now().date()
-        date_format = '%d.%m.%Y'
-        return dt.datetime.strptime(date, date_format).date()
+        return dt.datetime.strptime(date, self.RUS_DATE_FORMAT).date()
 
 
 if __name__ == '__main__':
