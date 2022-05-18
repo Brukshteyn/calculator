@@ -15,7 +15,7 @@ class Calculator:
     def get_today_stats(self):
         """Суммируем сумму за сегодня."""
         fix_date = dt.datetime.now().date()
-        return sum([rec.amount for rec in self.records if rec.date == fix_date])
+        return sum(rec.amount for rec in self.records if rec.date == fix_date)
 
     def get_balance(self) -> int:
         """Получение остатка от лимита."""
@@ -29,11 +29,12 @@ class Calculator:
 class CaloriesCalculator(Calculator):
 
     LIMIT_UP = 'Сегодня можно съесть что-нибудь ещё, но с общей калорийностью не более {balance} кКал'
+    LIMIT_DOWN = 'Хватит есть!'
 
     def get_calories_remained(self):
         """Проверяем превышение лимита по каллориям."""
         if self.get_today_stats() >= self.limit:
-            return 'Хватит есть!'
+            return self.LIMIT_DOWN
         return self.LIMIT_UP.format(balance = self.get_balance())
 
 
@@ -43,13 +44,19 @@ class CashCalculator(Calculator):
                     'usd': (63.3, 'USD'),
                     'eur': (65.7, 'Euro')}
     LIMIT_UP = 'На сегодня осталось {balance} {currency}'
+    LIMIT_DOWN = 'Денег нет, держись'
+    ERROR_CURRENCY = 'Неправильно введено значение валюты выберите из {currency}'
 
     def get_today_cash_remained(self, currency):
         """Проверям превышение лимита затрат и выдаем результат в необходимой валюте."""
-        currency_balance = round(self.get_balance() / self.DIC_CURRENCY[currency][0], 2)
+        try:
+            currency_balance = round(self.get_balance() / self.DIC_CURRENCY[currency][0], 2)
+        except:
+            raise KeyError(self.ERROR_CURRENCY.format(currency = ', '.join(self.DIC_CURRENCY.keys())))
         if self.get_today_stats() >= self.limit:
-            return 'Денег нет, держись'
+            return self.LIMIT_DOWN
         return self.LIMIT_UP.format(balance = currency_balance, currency = self.DIC_CURRENCY[currency][1])
+
 
 
 class Record:
@@ -78,7 +85,7 @@ if __name__ == '__main__':
     cash_calculator.add_record(Record(amount=3000,
                                       comment='бар в Танин др',
                                       date='08.11.2019'))
-    print(cash_calculator.get_today_cash_remained('rub'))
+    print(cash_calculator.get_today_cash_remained('ru'))
     # для CaloriesCalculator
     r2 = Record(amount=1186,
                 comment='Кусок тортика. И ещё один.',
@@ -89,5 +96,6 @@ if __name__ == '__main__':
     cal_calculator.add_record(Record(amount=3000,
                                      comment='бар',
                                      date='08.11.2019'))
-    print(cal_calculator.get_calories_remained())
+
+
 
