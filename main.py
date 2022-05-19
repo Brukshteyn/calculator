@@ -1,18 +1,35 @@
 import datetime as dt
 
 
+class Record:
+
+    RUS_DATE_FORMAT = '%d.%m.%Y'
+
+    def __init__(self, amount : int, comment : str, date : str = None) -> None:
+        """Сохраняем артибуты записи."""
+        self.amount = amount
+        self.date = self._get_date(date)
+        self.comment = comment
+
+    def _get_date(self, date)  -> dt.date:
+        """Проверка наличия и приведение даты."""
+        if date == None:
+            return dt.datetime.now().date()
+        return dt.datetime.strptime(date, self.RUS_DATE_FORMAT).date()
+
+
 class Calculator:
 
-    def __init__(self, limit):
+    def __init__(self, limit : int) -> None:
         """Сохраняем лимит и записи."""
         self.limit = limit
         self.records = []
 
-    def add_record(self, record):
+    def add_record(self, record : Record) -> None:
         """Добавление новой записи."""
         self.records.append(record)
 
-    def get_today_stats(self):
+    def get_today_stats(self) -> int:
         """Суммируем сумму за сегодня."""
         fix_date = dt.datetime.now().date()
         return sum(rec.amount for rec in self.records if rec.date == fix_date)
@@ -21,7 +38,7 @@ class Calculator:
         """Получение остатка от лимита."""
         return self.limit - self.get_today_stats()
 
-    def get_week_stats(self):
+    def get_week_stats(self) -> int:
         fix_date = dt.datetime.now().date()
         """Суммируем сумму за последние 7 дней."""
         return sum(rec.amount for rec in self.records if rec.date > fix_date - dt.timedelta.days(7))
@@ -32,7 +49,7 @@ class CaloriesCalculator(Calculator):
     LIMIT_UP = 'Сегодня можно съесть что-нибудь ещё, но с общей калорийностью не более {balance} кКал'
     LIMIT_DOWN = 'Хватит есть!'
 
-    def get_calories_remained(self):
+    def get_calories_remained(self) -> str:
         """Проверяем превышение лимита по каллориям."""
         if self.get_today_stats() >= self.limit:
             return self.LIMIT_DOWN
@@ -48,7 +65,7 @@ class CashCalculator(Calculator):
     LIMIT_DOWN = 'Денег нет, держись'
     ERROR_CURRENCY = 'currency, ожидали - {reception}; пришло - {current}'
 
-    def get_today_cash_remained(self, currency):
+    def get_today_cash_remained(self, currency : str) -> str:
         """Проверям превышение лимита затрат и выдаем результат в необходимой валюте."""
         try:
             currency_balance = round(self.get_balance() / self.DIC_CURRENCY[currency][0], 2)
@@ -57,23 +74,6 @@ class CashCalculator(Calculator):
         if self.get_today_stats() >= self.limit:
             return self.LIMIT_DOWN
         return self.LIMIT_UP.format(balance = currency_balance, currency = self.DIC_CURRENCY[currency][1])
-
-
-class Record:
-
-    RUS_DATE_FORMAT = '%d.%m.%Y'
-
-    def __init__(self, amount, comment, date=None):
-        """Сохраняем артибуты записи."""
-        self.amount = amount
-        self.date = self._get_date(date)
-        self.comment = comment
-
-    def _get_date(self, date):
-        """Проверка наличия и приведение даты."""
-        if date == None:
-            return dt.datetime.now().date()
-        return dt.datetime.strptime(date, self.RUS_DATE_FORMAT).date()
 
 
 if __name__ == '__main__':
