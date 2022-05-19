@@ -22,8 +22,9 @@ class Calculator:
         return self.limit - self.get_today_stats()
 
     def get_week_stats(self):
+        fix_date = dt.datetime.now().date()
         """Суммируем сумму за последние 7 дней."""
-        return sum([rec.amount for rec in self.records if rec.date > dt.datetime.now().date() - dt.timedelta.days(7)])
+        return sum(rec.amount for rec in self.records if rec.date > fix_date - dt.timedelta.days(7))
 
 
 class CaloriesCalculator(Calculator):
@@ -45,18 +46,17 @@ class CashCalculator(Calculator):
                     'eur': (65.7, 'Euro')}
     LIMIT_UP = 'На сегодня осталось {balance} {currency}'
     LIMIT_DOWN = 'Денег нет, держись'
-    ERROR_CURRENCY = 'Неправильно введено значение валюты выберите из {currency}'
+    ERROR_CURRENCY = 'currency, ожидали - {reception}; пришло - {current}'
 
     def get_today_cash_remained(self, currency):
         """Проверям превышение лимита затрат и выдаем результат в необходимой валюте."""
         try:
             currency_balance = round(self.get_balance() / self.DIC_CURRENCY[currency][0], 2)
         except:
-            raise KeyError(self.ERROR_CURRENCY.format(currency = ', '.join(self.DIC_CURRENCY.keys())))
+            raise KeyError(self.ERROR_CURRENCY.format(current = currency, reception = ', '.join(self.DIC_CURRENCY.keys())))
         if self.get_today_stats() >= self.limit:
             return self.LIMIT_DOWN
         return self.LIMIT_UP.format(balance = currency_balance, currency = self.DIC_CURRENCY[currency][1])
-
 
 
 class Record:
