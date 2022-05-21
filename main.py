@@ -1,21 +1,17 @@
 import datetime as dt
+from dataclasses import dataclass
 
 
+@dataclass
 class Record:
 
     RUS_DATE_FORMAT = '%d.%m.%Y'
 
-    def __init__(self, amount : int, comment : str, date : str = None) -> None:
-        """Сохраняем артибуты записи."""
-        self.amount = amount
-        self.date = self._get_date(date)
-        self.comment = comment
-
-    def _get_date(self, date)  -> dt.date:
-        """Проверка наличия и приведение даты."""
-        if date == None:
-            return dt.datetime.now().date()
-        return dt.datetime.strptime(date, self.RUS_DATE_FORMAT).date()
+    amount: int
+    comment: str
+    date: str = None
+    date = dt.datetime.now().date() if not date \
+        else dt.datetime.strptime(date, self.RUS_DATE_FORMAT).date()
 
 
 class Calculator:
@@ -85,7 +81,7 @@ if __name__ == '__main__':
     cash_calculator.add_record(Record(amount=3000,
                                       comment='бар в Танин др',
                                       date='08.11.2019'))
-    print(cash_calculator.get_today_cash_remained('ru'))
+    print(cash_calculator.get_today_cash_remained('rub'))
     # для CaloriesCalculator
     r2 = Record(amount=1186,
                 comment='Кусок тортика. И ещё один.',
@@ -96,6 +92,7 @@ if __name__ == '__main__':
     cal_calculator.add_record(Record(amount=3000,
                                      comment='бар',
                                      date='08.11.2019'))
+    print(cal_calculator.get_calories_remained())
 
 
 
