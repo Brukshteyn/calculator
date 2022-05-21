@@ -10,8 +10,9 @@ class Record:
     amount: int
     comment: str
     date: str = None
-    date = dt.datetime.now().date() if not date \
+    date = (dt.datetime.now().date() if not date
         else dt.datetime.strptime(date, self.RUS_DATE_FORMAT).date()
+            )
 
 
 class Calculator:
