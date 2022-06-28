@@ -2,17 +2,14 @@ import datetime as dt
 from dataclasses import dataclass
 
 
-@dataclass
 class Record:
 
     RUS_DATE_FORMAT = '%d.%m.%Y'
-
-    amount: int
-    comment: str
-    date: str = None
-    date = (dt.datetime.now().date() if not date
-        else dt.datetime.strptime(date, self.RUS_DATE_FORMAT).date()
-            )
+    def __init__(self, amount : int, comment : str, date : dt.datetime.date  = None):
+        self.amount = amount
+        self.comment = comment
+        self.date = (dt.datetime.now().date() if not date
+                    else dt.datetime.strptime(date, self.RUS_DATE_FORMAT).date())
 
 
 class Calculator:
@@ -38,7 +35,7 @@ class Calculator:
     def get_week_stats(self) -> int:
         fix_date = dt.datetime.now().date()
         """Суммируем сумму за последние 7 дней."""
-        return sum(rec.amount for rec in self.records if rec.date > fix_date - dt.timedelta.days(7))
+        return sum(rec.amount for rec in self.records if rec.date > (fix_date - dt.timedelta(days = 7)))
 
 
 class CaloriesCalculator(Calculator):
